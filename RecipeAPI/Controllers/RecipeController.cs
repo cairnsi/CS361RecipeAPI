@@ -8,6 +8,7 @@ using System.Net.Http;
 using Microsoft.Extensions.Configuration;
 using RecipeAPI.Clients;
 using Newtonsoft.Json.Linq;
+using System.Text;
 
 namespace RecipeAPI.Controllers
 {
@@ -24,12 +25,68 @@ namespace RecipeAPI.Controllers
             this._recipeClient = recipeService.Client;
         }
         [HttpGet]
-        public async Task<ContentResult> Get()
+        public async Task<ContentResult> Get(string ingredients, int? number)
         {
             string path = "/recipes/findByIngredients";
-            string query = "?ingredients=apples,+flour,+sugar&number=2";
-            string auth = $"&apiKey={Configuration["Spoonacular"]}";
-            using var httpResponse = await _recipeClient.GetAsync(path + query + auth);
+            StringBuilder builder = new StringBuilder();
+            builder.Append("?");
+            if (!string.IsNullOrEmpty(ingredients))
+            {
+                builder.Append($"ingredients={ingredients}");
+            }
+
+            if (number != null)
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append("&");
+                }
+                builder.Append($"number={number}");
+            }
+
+
+            string auth = builder.Length > 0 ? "&" : string.Empty;
+            auth += $"apiKey={Configuration["Spoonacular"]}";
+            using var httpResponse = await _recipeClient.GetAsync(path + builder.ToString() + auth);
+
+            httpResponse.EnsureSuccessStatusCode();
+            string content = await httpResponse.Content.ReadAsStringAsync();
+
+            return this.Content(content, "application/json");
+        }
+
+        [HttpGet]
+        [Route("{id}/information")]
+        public async Task<ContentResult> GetRecipe(int id)
+        {
+            string path = $"/recipes/{id}/information?apiKey={Configuration["Spoonacular"]}";
+            using var httpResponse = await _recipeClient.GetAsync(path);
+
+            httpResponse.EnsureSuccessStatusCode();
+            string content = await httpResponse.Content.ReadAsStringAsync();
+
+            return this.Content(content, "application/json"); ;
+        }
+
+        [HttpGet]
+        [Route("{id}/analyzedInstructions")]
+        public async Task<ContentResult> GetRecipeInstructions(int id)
+        {
+            string path = $"/recipes/{id}/analyzedInstructions?apiKey={Configuration["Spoonacular"]}";
+            using var httpResponse = await _recipeClient.GetAsync(path);
+
+            httpResponse.EnsureSuccessStatusCode();
+            string content = await httpResponse.Content.ReadAsStringAsync();
+
+            return this.Content(content, "application/json"); ;
+        }
+
+        [HttpGet]
+        [Route("winePairing")]
+        public async Task<ContentResult> GetRecipeInstructions(string wine)
+        {
+            string path = $"/food/wine/dishes?wine={wine}&apiKey={Configuration["Spoonacular"]}";
+            using var httpResponse = await _recipeClient.GetAsync(path);
 
             httpResponse.EnsureSuccessStatusCode();
             string content = await httpResponse.Content.ReadAsStringAsync();
