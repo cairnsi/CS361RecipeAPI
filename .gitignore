@@ -1,0 +1,5 @@
+!/.build
+!/.nuget
+!/.pipelines
+/CS361Financial/bin
+CS361Financial/obj/Debug/net5.0
