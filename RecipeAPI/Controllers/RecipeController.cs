@@ -25,14 +25,32 @@ namespace RecipeAPI.Controllers
             this._recipeClient = recipeService.Client;
         }
         [HttpGet]
-        public async Task<ContentResult> Get(string ingredients, int? number)
+        public async Task<ContentResult> Get(string ingredients, int? number, int? offset, string type, string instructionsRequired)
         {
-            string path = "/recipes/findByIngredients";
+            string path = "/recipes/complexSearch";
             StringBuilder builder = new StringBuilder();
             builder.Append("?");
             if (!string.IsNullOrEmpty(ingredients))
             {
                 builder.Append($"ingredients={ingredients}");
+            }
+
+            if (!string.IsNullOrEmpty(type))
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append("&");
+                }
+                builder.Append($"type={type}");
+            }
+
+            if (!string.IsNullOrEmpty(instructionsRequired))
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append("&");
+                }
+                builder.Append($"instructionsRequired={instructionsRequired}");
             }
 
             if (number != null)
@@ -44,9 +62,19 @@ namespace RecipeAPI.Controllers
                 builder.Append($"number={number}");
             }
 
+            if (offset != null)
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append("&");
+                }
+                builder.Append($"offset={offset}");
+            }
+
 
             string auth = builder.Length > 0 ? "&" : string.Empty;
             auth += $"apiKey={Configuration["Spoonacular"]}";
+            string url = path + builder.ToString() + auth;
             using var httpResponse = await _recipeClient.GetAsync(path + builder.ToString() + auth);
 
             httpResponse.EnsureSuccessStatusCode();

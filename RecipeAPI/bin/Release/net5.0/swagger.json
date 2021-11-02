@@ -21,6 +21,22 @@
             "name": "number",
             "type": "integer",
             "format": "int32"
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "instructionsRequired",
+            "type": "string"
           }
         ],
         "responses": {
@@ -63,6 +79,25 @@
             "required": true,
             "type": "integer",
             "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/Recipe/winePairing": {
+      "get": {
+        "tags": [
+          "Recipe"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "wine",
+            "type": "string"
           }
         ],
         "responses": {
