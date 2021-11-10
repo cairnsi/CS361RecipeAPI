@@ -25,14 +25,14 @@ namespace RecipeAPI.Controllers
             this._recipeClient = recipeService.Client;
         }
         [HttpGet]
-        public async Task<ContentResult> Get(string ingredients, int? number, int? offset, string type, string instructionsRequired)
+        public async Task<ContentResult> Get(string query, int? number, int? offset, string type, string instructionsRequired)
         {
             string path = "/recipes/complexSearch";
             StringBuilder builder = new StringBuilder();
             builder.Append("?");
-            if (!string.IsNullOrEmpty(ingredients))
+            if (!string.IsNullOrEmpty(query))
             {
-                builder.Append($"ingredients={ingredients}");
+                builder.Append($"query={query}");
             }
 
             if (!string.IsNullOrEmpty(type))
