@@ -18,7 +18,12 @@ namespace RecipeAPI.Controllers
     {
         HttpClient _recipeClient;
         public IConfiguration Configuration;
-
+        //test
+        /// <summary>
+        /// /
+        /// </summary>
+        /// <param name="recipeService"></param>
+        /// <param name="Configuration"></param>
         public RecipeController(RecipeService recipeService, IConfiguration Configuration)
         {
             this.Configuration = Configuration;
